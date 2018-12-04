@@ -28,7 +28,7 @@
 }
 
 - (void)setupUI {
-    self.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor grayColor];
     self.imgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height)];
     self.imgView.contentMode = UIViewContentModeScaleAspectFill;
     self.imgView.layer.masksToBounds = true;

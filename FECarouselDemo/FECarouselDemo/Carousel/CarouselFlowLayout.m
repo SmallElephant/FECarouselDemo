@@ -15,41 +15,42 @@
     [super prepareLayout];
     self.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     self.sectionInset = UIEdgeInsetsMake(0, [self collectionInset], 0, [self collectionInset]);
+    self.collectionView.decelerationRate = UIScrollViewDecelerationRateFast;
 }
 
 //设置缩放动画
-//- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
-//
-//    //扩大控制范围，防止出现闪屏现象
-//    CGRect bigRect = rect;
-//    bigRect.size.width = rect.size.width + 2*[self cellWidth];
-//    bigRect.origin.x = rect.origin.x - [self cellWidth];
-//
-//    NSArray *arr = [self getCopyOfAttributes:[super layoutAttributesForElementsInRect:bigRect]];
-//    //屏幕中线
-//    CGFloat centerX = self.collectionView.contentOffset.x + self.collectionView.bounds.size.width/2.0f;
-//    NSLog(@"偏移量:%f---宽度:%f---居中位置:%f",self.collectionView.contentOffset.x,self.collectionView.bounds.size.width,centerX);
-//    //刷新cell缩放
-//    for (UICollectionViewLayoutAttributes *attributes in arr) {
-//
-//        CGFloat distance = fabs(attributes.center.x - centerX);
-//        NSLog(@"属性位置:%f---距离之差:%f",attributes.center.x,distance);
-//        //移动的距离和屏幕宽度的的比例
-//        CGFloat apartScale = distance/self.collectionView.bounds.size.width;
-//        //把卡片移动范围固定到 -π/4到 +π/4这一个范围内
-//        CGFloat scale = fabs(cos(apartScale * M_PI/4));
-//        //设置cell的缩放 按照余弦函数曲线 越居中越趋近于1
-//        attributes.transform = CGAffineTransformMakeScale(scale, scale);
-//    }
-//    return arr;
-//}
+- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
+    //扩大控制范围，防止出现闪屏现象
+    CGRect bigRect = rect;
+    bigRect.size.width = rect.size.width + 2*[self cellWidth];
+    bigRect.origin.x = rect.origin.x - [self cellWidth];
 
-#pragma mark -
-#pragma mark 配置方法
+    NSArray *arr = [self getCopyOfAttributes:[super layoutAttributesForElementsInRect:bigRect]];
+    CGFloat boundWidth = self.collectionView.bounds.size.width;
+    //屏幕中线
+    CGFloat centerX = self.collectionView.contentOffset.x + boundWidth / 2.0f;
+    NSLog(@"偏移量:%f---宽度:%f---居中位置:%f",self.collectionView.contentOffset.x,self.collectionView.bounds.size.width,centerX);
+    //刷新cell缩放
+    for (UICollectionViewLayoutAttributes *attributes in arr) {
+
+        CGFloat distance = fabs(attributes.center.x - centerX);
+        NSLog(@"属性位置:%f--居中位置:%f-距离之差:%f",attributes.center.x,centerX,distance);
+        //移动的距离和屏幕宽度的的比例
+        CGFloat apartScale = distance / boundWidth;
+        //把卡片移动范围固定到 -π/4到 +π/4这一个范围内
+        CGFloat scale = fabs(cos(apartScale * M_PI/4));
+        NSLog(@"apartScale比例:%f---scale比例:%f",apartScale,scale);
+        //设置cell的缩放 按照余弦函数曲线 越居中越趋近于1
+        attributes.transform = CGAffineTransformMakeScale(scale, scale);
+    }
+    return arr;
+}
+
+#pragma mark Config
 
 //卡片宽度
 - (CGFloat)cellWidth {
-    return 300;
+    return [UIScreen mainScreen].bounds.size.width - 80;
 }
 
 //设置左右缩进

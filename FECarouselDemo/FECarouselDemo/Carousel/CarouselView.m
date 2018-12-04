@@ -56,7 +56,7 @@
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (!_pagingEnabled) {return;}
-    _dragEndX = scrollView.contentOffset.x;
+    _dragEndX = scrollView.contentOffset.x; // 分页处理
     dispatch_async(dispatch_get_main_queue(), ^{
         [self adjustCellToCenter];
     });
@@ -89,7 +89,7 @@
 #pragma mark Private
 
 - (void)adjustCellToCenter {
-    float dragMiniDistance = 50; // 最小滚动距离
+    float dragMiniDistance = 20; // 最小滚动距离
     if (_dragStartX -  _dragEndX >= dragMiniDistance) {
         _selectedIndex -= 1;//向右
     }else if(_dragEndX -  _dragStartX >= dragMiniDistance){
